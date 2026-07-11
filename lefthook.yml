@@ -1,0 +1,4 @@
+post-index-change:
+  jobs:
+    - name: lint
+      run: pnpm lint
