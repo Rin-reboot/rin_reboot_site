@@ -1,23 +1,37 @@
 [
   {
-    "period": "20XX.04 — 20XX.03",
+    "period": "2021.04 — 2023.03",
     "type": "education",
     "title": "情報系学科を卒業",
-    "organization": "○○大学 / ○○専門学校",
-    "description": "コンピュータサイエンスとWeb開発の基礎を学び、制作課題に取り組みました。"
+    "organization": "HAL東京",
+    "description": "designの基本や製作、プログラミングの基礎を学習しました。"
   },
   {
-    "period": "20XX.04 — 20XX.03",
+    "period": "2021.09 — 2022.05",
     "type": "work",
     "title": "Webエンジニア",
-    "organization": "株式会社○○",
-    "description": "Webサービスのフロントエンド開発と、既存画面の改善を担当しました。"
+    "organization": "株式会社algorithm",
+    "description": "Webサービスのフロントエンド開発をデザイン作成から実装、また社内SaaSのバックエンド保守や開発を行っていました。"
   },
   {
-    "period": "20XX.04 — PRESENT",
+    "period": "2022.06 — 2024.12",
     "type": "work",
-    "title": "フロントエンドエンジニア",
-    "organization": "株式会社○○",
-    "description": "React、Next.js、TypeScriptを用いたプロダクト開発に取り組んでいます。"
+    "title": "運用監視エンジニア→フロントエンドエンジニア",
+    "organization": "株式会社ハートビーツ",
+    "description": "入社当初は運用監視エンジニアとして、サーバー運用業務やインフラ環境の構築等を行っていました。その後開発事業部へ引き抜いて頂き、自社開発サービスのフロントエンドをメインに、バックエンドからインフラ・でデザインまで幅広く対応するエンジニアとして就業していました。"
+  },
+  {
+    "period": "2025.01 ー 2025.08",
+    "type": "work",
+    "title": "バーテンダー勤務",
+    "organization": "hidden",
+    "description": "都内のバー数店舗にてバーテンダーとして勤務していました。"
+  },
+  {
+    "period": "2025.09 ー present",
+    "type": "work",
+    "title": "求職しながら個人開発",
+    "organization": "none",
+    "description": "現在はフロントエンドエンジニアのポジションで働かせていただける企業を探しています。期間中にはご縁を頂いて業務委託として開発依頼を頂いたり、個人開発を通してスキルアップを行っています。"
   }
 ]
