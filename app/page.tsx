@@ -1,7 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import careerEntries from "./career.json";
+
+const educationEntries = careerEntries.filter((entry) => entry.type === "education");
+const workEntries = careerEntries.filter((entry) => entry.type === "work");
+
+function CareerTimeline({ entries }: { entries: typeof careerEntries }) {
+  return (
+    <ol className="career-timeline">
+      {entries.map((entry) => (
+        <li key={`${entry.period}-${entry.title}`}>
+          <div className="career-marker" aria-hidden="true" />
+          <div className="career-entry-meta">
+            <time>{entry.period}</time>
+          </div>
+          <h3>{entry.title}</h3>
+          <p className="career-organization">{entry.organization}</p>
+          <p className="career-description">{entry.description}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
 const projects = [
   {
@@ -47,6 +69,18 @@ const technologies = [
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCareerOpen, setIsCareerOpen] = useState(false);
+  const careerDialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = careerDialogRef.current;
+
+    if (isCareerOpen && !dialog?.open) {
+      dialog?.showModal();
+    } else if (!isCareerOpen && dialog?.open) {
+      dialog.close();
+    }
+  }, [isCareerOpen]);
 
   return (
     <div className="site-shell">
@@ -108,7 +142,7 @@ export default function Home() {
               使う人の手に自然になじむインターフェースを考え、実装しています。
               フロントエンドを軸に、気になった技術を自分の手で確かめることが好きです。
             </p>
-            <nav className="hero-actions" aria-label="外部プロフィール">
+            <nav className="hero-actions" aria-label="プロフィールと経歴">
               <a
                 className="button button-primary"
                 href="https://github.com/Rin-reboot"
@@ -125,6 +159,13 @@ export default function Home() {
               >
                 X / @dev_rin_fl <span aria-hidden="true">↗</span>
               </a>
+              <button
+                className="button career-button"
+                type="button"
+                onClick={() => setIsCareerOpen(true)}
+              >
+                Career <span aria-hidden="true">＋</span>
+              </button>
             </nav>
           </div>
 
@@ -212,6 +253,53 @@ export default function Home() {
           </a>
         </section>
       </main>
+
+      <dialog
+        className="career-dialog"
+        ref={careerDialogRef}
+        aria-labelledby="career-title"
+        onClose={() => setIsCareerOpen(false)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) {
+            setIsCareerOpen(false);
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            setIsCareerOpen(false);
+          }
+        }}
+      >
+        <div className="career-modal">
+          <header className="career-modal-header">
+            <div>
+              <p>EDUCATION + EXPERIENCE</p>
+              <h2 id="career-title">Career timeline.</h2>
+            </div>
+            <button
+              className="career-close"
+              type="button"
+              aria-label="経歴を閉じる"
+              onClick={() => setIsCareerOpen(false)}
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </header>
+
+          <section className="career-section" aria-labelledby="education-title">
+            <h3 id="education-title">Education <span>学歴</span></h3>
+            <CareerTimeline entries={educationEntries} />
+          </section>
+
+          <section
+            className="career-section career-section-work"
+            aria-labelledby="work-history-title"
+          >
+            <h3 id="work-history-title">Experience <span>職歴</span></h3>
+            <CareerTimeline entries={workEntries} />
+          </section>
+        </div>
+      </dialog>
 
       <footer>
         <span>© {new Date().getFullYear()} Rin</span>

@@ -171,6 +171,162 @@ a:focus-visible {
   box-shadow: 1px 1px 0 var(--ink);
 }
 
+.career-button {
+  cursor: pointer;
+}
+
+.career-dialog {
+  width: min(760px, calc(100% - 40px));
+  max-height: min(780px, calc(100dvh - 40px));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 18px 18px 0 rgba(0, 0, 0, 0.16);
+}
+
+.career-dialog::backdrop {
+  background: rgba(10, 10, 10, 0.52);
+  backdrop-filter: blur(2px);
+}
+
+.career-modal {
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.career-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 30px 26px;
+  border-bottom: 1px solid var(--ink);
+  background: var(--paper);
+}
+
+.career-modal-header p {
+  margin: 0 0 10px;
+  font: 500 0.62rem/1 var(--font-mono);
+  letter-spacing: 0.14em;
+}
+
+.career-modal-header h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.career-close {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.25rem/1 var(--font-sans);
+  cursor: pointer;
+}
+
+.career-close:hover {
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.career-close:focus-visible,
+.career-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 5px;
+}
+
+.career-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 26px 30px 30px 18px;
+}
+
+.career-section {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  padding-left: 30px;
+}
+
+.career-section > h3 {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 30px 20px 30px 0;
+  font: 600 0.72rem/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.career-section > h3 span {
+  color: var(--muted);
+  font: 500 0.58rem/1 var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+.career-section-work {
+  border-top: 1px solid var(--ink);
+}
+
+.career-timeline li {
+  position: relative;
+  padding: 0 0 30px 28px;
+  border-left: 1px solid var(--line);
+}
+
+.career-timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.career-marker {
+  position: absolute;
+  top: 3px;
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  background: var(--ink);
+}
+
+.career-entry-meta {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font: 500 0.6rem/1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.career-timeline h3 {
+  margin: 0;
+  font-size: clamp(1.08rem, 2.4vw, 1.35rem);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.career-organization {
+  margin: 7px 0 0;
+  color: var(--ink);
+  font: 500 0.68rem/1.4 var(--font-mono);
+}
+
+.career-description {
+  max-width: 470px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
 .floating-card {
   position: absolute;
   z-index: 1;
@@ -592,6 +748,34 @@ footer {
   .hero-actions {
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .career-dialog {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .career-modal-header {
+    padding: 22px 20px 20px;
+  }
+
+  .career-section {
+    display: block;
+    padding-left: 0;
+  }
+
+  .career-timeline {
+    padding: 0 20px 26px 30px;
+  }
+
+  .career-section > h3 {
+    align-items: baseline;
+    flex-direction: row;
+    padding: 24px 20px 18px;
+  }
+
+  .career-timeline li {
+    padding-left: 22px;
   }
 
   .floating-card {

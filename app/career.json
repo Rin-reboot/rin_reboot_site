@@ -1,0 +1,23 @@
+[
+  {
+    "period": "20XX.04 — 20XX.03",
+    "type": "education",
+    "title": "情報系学科を卒業",
+    "organization": "○○大学 / ○○専門学校",
+    "description": "コンピュータサイエンスとWeb開発の基礎を学び、制作課題に取り組みました。"
+  },
+  {
+    "period": "20XX.04 — 20XX.03",
+    "type": "work",
+    "title": "Webエンジニア",
+    "organization": "株式会社○○",
+    "description": "Webサービスのフロントエンド開発と、既存画面の改善を担当しました。"
+  },
+  {
+    "period": "20XX.04 — PRESENT",
+    "type": "work",
+    "title": "フロントエンドエンジニア",
+    "organization": "株式会社○○",
+    "description": "React、Next.js、TypeScriptを用いたプロダクト開発に取り組んでいます。"
+  }
+]
