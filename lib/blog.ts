@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { load } from "cheerio";
 import matter from "gray-matter";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
@@ -67,7 +68,13 @@ export function getTags(): string[] {
   return [...new Set(getAllPosts().flatMap((post) => post.tags))].sort();
 }
 
-export async function renderMarkdown(content: string): Promise<string> {
+export type TocItem = {
+  id: string;
+  text: string;
+  level: 2 | 3;
+};
+
+export async function renderMarkdown(content: string): Promise<{ html: string; toc: TocItem[] }> {
   const result = await unified()
     .use(remarkParse)
     .use(remarkRehype)
@@ -78,5 +85,18 @@ export async function renderMarkdown(content: string): Promise<string> {
     })
     .use(rehypeStringify)
     .process(content);
-  return String(result);
+  const html = String(result);
+  const $ = load(html, null, false);
+  const toc: TocItem[] = [];
+  $("h2, h3").each((_, heading) => {
+    const id = $(heading).attr("id");
+    if (id) {
+      toc.push({
+        id,
+        text: $(heading).text(),
+        level: Number(heading.tagName.slice(1)) as 2 | 3,
+      });
+    }
+  });
+  return { html, toc };
 }
