@@ -6,7 +6,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
 const directory = path.join(process.cwd(), "content", "blog");
-const files = fs.readdirSync(directory).filter((file) => file.endsWith(".md"));
+const files = fs.existsSync(directory) ? fs.readdirSync(directory).filter((file) => file.endsWith(".md")) : [];
 const errors = [];
 const slugs = new Set();
 for (const file of files) {

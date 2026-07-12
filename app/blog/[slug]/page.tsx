@@ -6,7 +6,10 @@ import { Breadcrumbs, siteUrl } from "../components";
 import { ArticleNavigation, ArticleToc } from "./ArticleNavigation";
 
 export const dynamicParams = false;
-export function generateStaticParams() { return getAllPosts().map((post) => ({ slug: post.slug })); }
+export function generateStaticParams() {
+  const params = getAllPosts().map((post) => ({ slug: post.slug }));
+  return params.length > 0 ? params : [{ slug: "__empty__" }];
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
