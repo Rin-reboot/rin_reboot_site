@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     description: "Interfaces, systems, and everything between.",
     images: ["/og.png"],
   },
+  alternates: {
+    types: {
+      "application/rss+xml": "/rss.xml",
+    },
+  },
 };
 
 export default function RootLayout({

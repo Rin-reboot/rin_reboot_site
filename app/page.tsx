@@ -107,6 +107,7 @@ export default function Home() {
         >
           <a href="#work">Work</a>
           <a href="#about">About</a>
+          <a href="/blog/">Blog</a>
           <a
             href="https://github.com/Rin-reboot"
             target="_blank"
@@ -166,6 +167,9 @@ export default function Home() {
               >
                 Career <span aria-hidden="true">＋</span>
               </button>
+              <a className="button" href="/blog/">
+                Blog <span aria-hidden="true">→</span>
+              </a>
             </nav>
           </div>
 
