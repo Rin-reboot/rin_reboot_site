@@ -619,6 +619,25 @@ footer {
   50% { translate: 0 -8px; }
 }
 
+@media (max-width: 1050px) {
+  .hero {
+    min-height: auto;
+    grid-template-rows: auto auto;
+    align-content: center;
+    row-gap: 38px;
+    padding-bottom: 72px;
+  }
+
+  .status-card {
+    position: relative;
+    inset: auto;
+    width: min(520px, 72%);
+    margin: 0 auto;
+    transform: rotate(1deg);
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .hero {
     padding-top: 132px;
@@ -626,10 +645,6 @@ footer {
 
   .avatar-card {
     top: 36px;
-  }
-
-  .status-card {
-    bottom: 44px;
   }
 
   .project-grid {
