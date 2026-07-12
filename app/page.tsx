@@ -167,6 +167,9 @@ export default function Home() {
               >
                 Career <span aria-hidden="true">＋</span>
               </button>
+              <a className="button" href="/blog/">
+                Blog <span aria-hidden="true">→</span>
+              </a>
             </nav>
           </div>
 
