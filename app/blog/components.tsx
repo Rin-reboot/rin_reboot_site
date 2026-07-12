@@ -71,5 +71,5 @@ export function PostList({ posts, origin = { type: "blog" } }: { posts: BlogPost
 }
 
 export function BlogFooter() {
-  return <footer className="blog-footer"><span>© {new Date().getFullYear()} Rin</span><Link href="/">Portfolioへ戻る</Link></footer>;
+  return <footer className="blog-footer"><span>© {new Date().getFullYear()} Rin</span></footer>;
 }
