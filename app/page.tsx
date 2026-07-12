@@ -107,6 +107,7 @@ export default function Home() {
         >
           <a href="#work">Work</a>
           <a href="#about">About</a>
+          <a href="/blog/">Blog</a>
           <a
             href="https://github.com/Rin-reboot"
             target="_blank"

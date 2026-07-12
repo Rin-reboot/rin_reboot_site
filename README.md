@@ -27,3 +27,21 @@ pnpm run lint
 pnpm run typecheck
 pnpm test
 ```
+
+## ブログ記事
+
+記事は `content/blog` に Markdown ファイルとして追加します。記事タイトルはページ側で `h1` になるため、本文の見出しは `h2` から始め、階層を飛ばさないでください。
+
+執筆中の軽量チェック:
+
+```bash
+pnpm content:check
+```
+
+記事を更新したときの push 前チェック:
+
+```bash
+pnpm check:blog
+```
+
+このチェックは Markdown、静的ビルド、生成 HTML の見出し・メタデータ・パンくず・構造化データを検証します。pre-push フックや GitHub Actions からは自動実行しません。
