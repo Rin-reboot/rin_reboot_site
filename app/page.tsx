@@ -108,13 +108,6 @@ export default function Home() {
           <a href="#work">Work</a>
           <a href="#about">About</a>
           <a href="/blog/">Blog</a>
-          <a
-            href="https://github.com/Rin-reboot"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub <span aria-hidden="true">↗</span>
-          </a>
         </nav>
       </header>
 
@@ -144,6 +137,16 @@ export default function Home() {
               フロントエンドを軸に、気になった技術を自分の手で確かめることが好きです。
             </p>
             <nav className="hero-actions" aria-label="プロフィールと経歴">
+              <a className="button" href="/blog/">
+                Blog <span aria-hidden="true">→</span>
+              </a>
+              <button
+                className="button career-button"
+                type="button"
+                onClick={() => setIsCareerOpen(true)}
+              >
+                Career <span aria-hidden="true">＋</span>
+              </button>
               <a
                 className="button button-primary"
                 href="https://github.com/Rin-reboot"
@@ -160,15 +163,13 @@ export default function Home() {
               >
                 X / @dev_rin_fl <span aria-hidden="true">↗</span>
               </a>
-              <button
-                className="button career-button"
-                type="button"
-                onClick={() => setIsCareerOpen(true)}
+              <a
+                className="button"
+                href="https://qiita.com/rin_reboot"
+                target="_blank"
+                rel="noreferrer"
               >
-                Career <span aria-hidden="true">＋</span>
-              </button>
-              <a className="button" href="/blog/">
-                Blog <span aria-hidden="true">→</span>
+                Qiita <span aria-hidden="true">↗</span>
               </a>
             </nav>
           </div>

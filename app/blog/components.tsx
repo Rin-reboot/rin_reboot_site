@@ -12,7 +12,6 @@ export function BlogHeader() {
       <nav aria-label="ブログナビゲーション">
         <Link href="/">Portfolio</Link>
         <Link href="/blog/">Blog</Link>
-        <a href="https://github.com/Rin-reboot" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
       </nav>
     </header>
   );
