@@ -6,7 +6,15 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/.next", "!**/out", "!**/node_modules"]
+    "includes": [
+      "**",
+      "!**/.agents",
+      "!**/.codex",
+      "!**/.impeccable",
+      "!**/.next",
+      "!**/out",
+      "!**/node_modules"
+    ]
   },
   "formatter": {
     "enabled": false

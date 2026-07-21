@@ -16,7 +16,7 @@ function CareerTimeline({ entries }: { entries: typeof careerEntries }) {
           <div className="career-entry-meta">
             <time>{entry.period}</time>
           </div>
-          <h3>{entry.title}</h3>
+          <h4>{entry.title}</h4>
           <p className="career-organization">{entry.organization}</p>
           <p className="career-description">{entry.description}</p>
         </li>
@@ -77,6 +77,7 @@ export default function Home() {
 
     if (isCareerOpen && !dialog?.open) {
       dialog?.showModal();
+      dialog?.querySelector<HTMLButtonElement>(".career-close")?.focus();
     } else if (!isCareerOpen && dialog?.open) {
       dialog.close();
     }
@@ -104,6 +105,12 @@ export default function Home() {
           id="main-navigation"
           className={isMenuOpen ? "is-open" : undefined}
           aria-label="メインナビゲーション"
+          onClick={() => setIsMenuOpen(false)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              setIsMenuOpen(false);
+            }
+          }}
         >
           <a href="#work">Work</a>
           <a href="#about">About</a>
