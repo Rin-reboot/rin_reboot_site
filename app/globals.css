@@ -5,12 +5,22 @@
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --paper: #ffffff;
   --ink: #0a0a0a;
-  --muted: #666666;
-  --line: #dddddd;
-  --line-strong: #b8b8b8;
-  --shadow-small: 0 10px 24px rgba(0, 0, 0, 0.07);
-  --shadow-medium: 0 22px 58px rgba(0, 0, 0, 0.1);
-  --shadow-large: 0 36px 90px rgba(0, 0, 0, 0.12);
+  --muted: #5b5b5b;
+  --quiet: #707070;
+  --line: #d8d8d8;
+  --line-strong: #a8a8a8;
+  --accent: #315846;
+  --code-surface: #f1f3f2;
+  --code-line: #343434;
+  --shadow-small: 3px 3px 0 rgb(10 10 10 / 8%);
+  --shadow-medium: 6px 6px 0 rgb(10 10 10 / 11%);
+  --shadow-large: 8px 8px 0 rgb(10 10 10 / 14%);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --z-floating: 1;
+  --z-content: 2;
+  --z-header: 10;
+  --z-popover: 30;
+  --z-floating-action: 40;
 }
 
 * {
@@ -27,6 +37,7 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -34,9 +45,18 @@ a {
   text-decoration: none;
 }
 
-a:focus-visible {
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 5px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
 }
 
 .site-shell {
@@ -60,7 +80,7 @@ a:focus-visible {
 
 .brand span,
 .hero h1 > span {
-  color: #7a7a7a;
+  color: var(--quiet);
 }
 
 .site-header nav {
@@ -73,7 +93,9 @@ a:focus-visible {
 }
 
 .site-header nav a {
-  padding: 10px 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .site-header nav a:hover {
@@ -103,7 +125,7 @@ a:focus-visible {
   width: min(790px, 78%);
   text-align: center;
   position: relative;
-  z-index: 2;
+  z-index: var(--z-content);
 }
 
 .eyebrow,
@@ -117,9 +139,9 @@ a:focus-visible {
 
 .hero h1 {
   margin: 0;
-  font-size: clamp(4.9rem, 10vw, 7.7rem);
-  line-height: 0.78;
-  letter-spacing: -0.09em;
+  font-size: clamp(4.9rem, 10vw, 6rem);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
   font-weight: 760;
 }
 
@@ -129,7 +151,7 @@ a:focus-visible {
   margin: 32px auto 0;
   font-size: clamp(1.1rem, 2.6vw, 2.05rem);
   line-height: 1.12;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.03em;
   font-weight: 540;
 }
 
@@ -139,6 +161,7 @@ a:focus-visible {
   color: var(--muted);
   font-size: clamp(0.94rem, 1.4vw, 1.05rem);
   line-height: 1.95;
+  text-wrap: pretty;
 }
 
 .hero-actions {
@@ -158,7 +181,11 @@ a:focus-visible {
   background: var(--paper);
   font: 500 0.76rem/1 var(--font-mono);
   box-shadow: 4px 4px 0 var(--ink);
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    color 180ms var(--ease-out),
+    background-color 180ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
 }
 
 .button-primary {
@@ -169,6 +196,11 @@ a:focus-visible {
 .button:hover {
   transform: translate(3px, 3px);
   box-shadow: 1px 1px 0 var(--ink);
+}
+
+.button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .career-button {
@@ -184,7 +216,7 @@ a:focus-visible {
   border: 1px solid var(--ink);
   background: var(--paper);
   color: var(--ink);
-  box-shadow: 18px 18px 0 rgba(0, 0, 0, 0.16);
+  box-shadow: 10px 10px 0 rgb(10 10 10 / 16%);
 }
 
 .career-dialog::backdrop {
@@ -201,7 +233,7 @@ a:focus-visible {
 .career-modal-header {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: var(--z-floating);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -221,23 +253,31 @@ a:focus-visible {
   margin: 0;
   font-size: clamp(1.9rem, 5vw, 2.8rem);
   line-height: 1;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.035em;
 }
 
 .career-close {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   flex: 0 0 auto;
   border: 1px solid var(--ink);
   background: var(--paper);
   color: var(--ink);
   font: 400 1.25rem/1 var(--font-sans);
   cursor: pointer;
+  transition:
+    color 180ms var(--ease-out),
+    background-color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
 }
 
 .career-close:hover {
   color: var(--paper);
   background: var(--ink);
+}
+
+.career-close:active {
+  transform: scale(0.94);
 }
 
 .career-close:focus-visible,
@@ -306,7 +346,7 @@ a:focus-visible {
   letter-spacing: 0.06em;
 }
 
-.career-timeline h3 {
+.career-timeline h4 {
   margin: 0;
   font-size: clamp(1.08rem, 2.4vw, 1.35rem);
   line-height: 1.25;
@@ -325,11 +365,12 @@ a:focus-visible {
   color: var(--muted);
   font-size: 0.8rem;
   line-height: 1.75;
+  text-wrap: pretty;
 }
 
 .floating-card {
   position: absolute;
-  z-index: 1;
+  z-index: var(--z-floating);
   background: var(--paper);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-medium);
@@ -422,7 +463,7 @@ a:focus-visible {
   margin: 0;
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   line-height: 0.96;
-  letter-spacing: -0.07em;
+  letter-spacing: -0.035em;
 }
 
 .project-grid {
@@ -439,19 +480,26 @@ a:focus-visible {
   padding: 26px;
   border: 1px solid var(--line);
   background: var(--paper);
-  box-shadow: var(--shadow-small);
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  box-shadow: none;
+  transition:
+    transform 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out),
+    border-color 220ms var(--ease-out);
 }
 
 .project-card-featured {
-  min-height: 405px;
-  box-shadow: var(--shadow-medium);
+  min-height: 370px;
+  box-shadow: var(--shadow-small);
 }
 
 .project-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-large);
+  box-shadow: var(--shadow-medium);
+}
+
+.project-card:active {
+  transform: translateY(-1px);
 }
 
 .project-meta,
@@ -464,17 +512,18 @@ a:focus-visible {
 }
 
 .project-card h3 {
-  margin: 74px 0 16px;
+  margin: 56px 0 16px;
   font-size: clamp(1.65rem, 2.8vw, 2.5rem);
   line-height: 1;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.03em;
 }
 
 .project-card p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.83rem;
+  font-size: 0.9rem;
   line-height: 1.85;
+  text-wrap: pretty;
 }
 
 .project-card ul,
@@ -499,7 +548,7 @@ a:focus-visible {
 .project-card li {
   padding: 6px 9px;
   border: 1px solid var(--line);
-  font-size: 0.6rem;
+  font-size: 0.68rem;
 }
 
 .about-section {
@@ -520,7 +569,7 @@ a:focus-visible {
 .about-copy {
   grid-row: span 2;
   padding: clamp(30px, 5vw, 62px);
-  box-shadow: var(--shadow-medium);
+  box-shadow: var(--shadow-small);
 }
 
 .section-kicker {
@@ -537,11 +586,11 @@ a:focus-visible {
   color: var(--muted);
   font-size: 0.93rem;
   line-height: 2;
+  text-wrap: pretty;
 }
 
 .tech-panel {
   padding: 30px;
-  box-shadow: var(--shadow-small);
 }
 
 .panel-heading {
@@ -564,7 +613,6 @@ a:focus-visible {
 
 .hobby-note {
   padding: 26px 30px;
-  box-shadow: var(--shadow-small);
 }
 
 .hobby-note span {
@@ -577,6 +625,7 @@ a:focus-visible {
   color: var(--muted);
   font-size: 0.78rem;
   line-height: 1.8;
+  text-wrap: pretty;
 }
 
 .closing {
@@ -595,9 +644,11 @@ a:focus-visible {
 }
 
 .closing a {
-  display: inline-block;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   margin-top: 44px;
-  padding-bottom: 5px;
+  padding: 0 2px;
   border-bottom: 1px solid var(--ink);
   font: 500 0.8rem/1 var(--font-mono);
 }
@@ -610,7 +661,7 @@ footer {
   gap: 30px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font: 500 0.61rem/1 var(--font-mono);
+  font: 500 0.68rem/1 var(--font-mono);
   letter-spacing: 0.1em;
 }
 
@@ -691,7 +742,7 @@ footer {
   .site-header {
     height: 70px;
     position: relative;
-    z-index: 10;
+    z-index: var(--z-header);
   }
 
   .site-header nav {
@@ -789,6 +840,11 @@ footer {
   .hero-actions {
     justify-content: flex-start;
     flex-wrap: wrap;
+    gap: 12px 10px;
+  }
+
+  .hero-actions .button {
+    padding-inline: 16px;
   }
 
   .career-dialog {
@@ -813,6 +869,24 @@ footer {
     align-items: baseline;
     flex-direction: row;
     padding: 24px 20px 18px;
+    font-size: 0.75rem;
+  }
+
+  .career-section > h3 span,
+  .career-entry-meta {
+    font-size: 0.68rem;
+  }
+
+  .career-timeline h4 {
+    font-size: 1.12rem;
+  }
+
+  .career-organization {
+    font-size: 0.75rem;
+  }
+
+  .career-description {
+    font-size: 0.875rem;
   }
 
   .career-timeline li {
@@ -861,7 +935,7 @@ footer {
   .project-card,
   .project-card-featured,
   .project-card:last-child {
-    min-height: 320px;
+    min-height: 280px;
     grid-column: auto;
   }
 
