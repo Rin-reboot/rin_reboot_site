@@ -503,6 +503,10 @@ h4 {
   user-select: none;
 }
 
+.project-viewport.is-dragging * {
+  cursor: grabbing;
+}
+
 .project-grid {
   width: 100%;
   display: flex;
@@ -519,10 +523,7 @@ h4 {
   border: 1px solid var(--line);
   background: var(--paper);
   box-shadow: none;
-  transition:
-    transform 220ms var(--ease-out),
-    box-shadow 220ms var(--ease-out),
-    border-color 220ms var(--ease-out);
+  transition: border-color 180ms var(--ease-out);
   scroll-snap-align: start;
 }
 
@@ -532,13 +533,7 @@ h4 {
 }
 
 .project-card:hover {
-  transform: translateY(-4px);
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-medium);
-}
-
-.project-card:active {
-  transform: translateY(-1px);
 }
 
 .project-meta,
@@ -550,8 +545,43 @@ h4 {
   letter-spacing: 0.08em;
 }
 
+.project-meta {
+  align-items: flex-start;
+}
+
+.project-meta > span {
+  padding-top: 10px;
+}
+
+.project-card-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: -10px -10px 0 0;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition:
+    background-color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+
+.project-card-link:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
 .project-card h3 {
-  margin: 56px 0 16px;
+  margin: 34px 0 16px;
   font-size: clamp(1.65rem, 2.8vw, 2.5rem);
   line-height: 1;
   letter-spacing: -0.03em;

@@ -90,6 +90,7 @@ export default function Home() {
     startScrollLeft: 0,
     hasMoved: false,
   });
+  const projectSnapCleanupRef = useRef<(() => void) | null>(null);
 
   const updateProjectNavigation = useCallback(() => {
     const carousel = projectCarouselRef.current;
@@ -119,6 +120,49 @@ export default function Home() {
     carousel.scrollBy({
       left: direction * (firstCard.offsetWidth + gap),
       behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
+
+  const snapProjectsToNearest = (carousel: HTMLElement, releasePosition = carousel.scrollLeft) => {
+    const firstCard = carousel.querySelector<HTMLElement>(".project-card");
+    const track = carousel.querySelector<HTMLElement>(".project-grid");
+
+    if (!firstCard || !track) {
+      return;
+    }
+
+    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+    const cardStep = firstCard.offsetWidth + gap;
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+    const nearestPosition = Math.round(releasePosition / cardStep) * cardStep;
+    const targetPosition = Math.min(maxScrollLeft, Math.max(0, nearestPosition));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    projectSnapCleanupRef.current?.();
+    carousel.style.scrollSnapType = "none";
+
+    if (reduceMotion || Math.abs(carousel.scrollLeft - targetPosition) < 1) {
+      carousel.scrollLeft = targetPosition;
+      carousel.style.removeProperty("scroll-snap-type");
+      projectSnapCleanupRef.current = null;
+      return;
+    }
+
+    let fallbackTimeout = 0;
+    const restoreScrollSnap = () => {
+      carousel.removeEventListener("scrollend", restoreScrollSnap);
+      window.clearTimeout(fallbackTimeout);
+      carousel.style.removeProperty("scroll-snap-type");
+      projectSnapCleanupRef.current = null;
+    };
+
+    carousel.addEventListener("scrollend", restoreScrollSnap, { once: true });
+    fallbackTimeout = window.setTimeout(restoreScrollSnap, 600);
+    projectSnapCleanupRef.current = restoreScrollSnap;
+
+    carousel.scrollTo({
+      left: targetPosition,
+      behavior: "smooth",
     });
   };
 
@@ -269,17 +313,21 @@ export default function Home() {
               aria-label="プロジェクト一覧"
               aria-describedby="project-carousel-hint"
               onScroll={updateProjectNavigation}
+              onDragStart={(event) => event.preventDefault()}
               onPointerDown={(event) => {
                 if (event.pointerType === "touch" || event.button !== 0) {
                   return;
                 }
 
+                projectSnapCleanupRef.current?.();
+                event.currentTarget.style.scrollSnapType = "none";
                 projectDragRef.current = {
                   pointerId: event.pointerId,
                   startX: event.clientX,
                   startScrollLeft: event.currentTarget.scrollLeft,
                   hasMoved: false,
                 };
+                event.currentTarget.classList.add("is-dragging");
                 event.currentTarget.setPointerCapture(event.pointerId);
                 setIsDraggingProjects(true);
               }}
@@ -303,10 +351,25 @@ export default function Home() {
                 }
 
                 event.currentTarget.releasePointerCapture(event.pointerId);
+                if (projectDragRef.current.hasMoved) {
+                  const releasePosition =
+                    projectDragRef.current.startScrollLeft -
+                    (event.clientX - projectDragRef.current.startX);
+                  snapProjectsToNearest(event.currentTarget, releasePosition);
+                } else {
+                  event.currentTarget.style.removeProperty("scroll-snap-type");
+                }
+                event.currentTarget.classList.remove("is-dragging");
                 projectDragRef.current.pointerId = null;
                 setIsDraggingProjects(false);
               }}
-              onPointerCancel={() => {
+              onPointerCancel={(event) => {
+                if (projectDragRef.current.hasMoved) {
+                  snapProjectsToNearest(event.currentTarget);
+                } else {
+                  event.currentTarget.style.removeProperty("scroll-snap-type");
+                }
+                event.currentTarget.classList.remove("is-dragging");
                 projectDragRef.current.pointerId = null;
                 projectDragRef.current.hasMoved = false;
                 setIsDraggingProjects(false);
@@ -321,16 +384,22 @@ export default function Home() {
             >
               <div className="project-grid">
                 {projects.map((project) => (
-                  <a
+                  <article
                     className={`project-card${project.index === "01" ? " project-card-featured" : ""}`}
-                    href={project.href}
-                    target="_blank"
-                    rel="noreferrer"
                     key={project.title}
                   >
                     <div className="project-meta">
                       <span>{project.index} / {project.type}</span>
-                      <span aria-hidden="true">↗</span>
+                      <a
+                        className="project-card-link"
+                        href={project.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        draggable={false}
+                        aria-label={`${project.title} の GitHub リポジトリを開く`}
+                      >
+                        OPEN <span aria-hidden="true">↗</span>
+                      </a>
                     </div>
                     <h3>{project.title}</h3>
                     <p>{project.description}</p>
@@ -339,7 +408,7 @@ export default function Home() {
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
-                  </a>
+                  </article>
                 ))}
               </div>
             </section>
