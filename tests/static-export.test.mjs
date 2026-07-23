@@ -12,6 +12,9 @@ test("exports the portfolio as static HTML", async () => {
   assert.match(html, /pure_board/);
   assert.match(html, /log_total/);
   assert.match(html, /chatapp/);
+  assert.match(html, /anti-popup-guard/);
+  assert.match(html, /前のプロジェクトを表示/);
+  assert.match(html, /次のプロジェクトを表示/);
   assert.doesNotMatch(html, /_next\/image|fonts\.googleapis|fonts\.gstatic|codex-preview/);
 });
 
