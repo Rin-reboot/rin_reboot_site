@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import careerEntries from "./career.json";
 
 const educationEntries = careerEntries.filter((entry) => entry.type === "education");
@@ -53,6 +53,15 @@ const projects = [
     stack: ["Next.js", "AWS", "GraphQL"],
     href: "https://github.com/Rin-reboot/chatapp",
   },
+  {
+    index: "04",
+    type: "CHROME EXTENSION",
+    title: "anti-popup-guard",
+    description:
+      "通常のページ JavaScript を止めずに、クリックに便乗する別タブ広告やポップアンダー、透明なメディアオーバーレイを遮断する Chrome 拡張。",
+    stack: ["Manifest V3", "JavaScript", "DNR"],
+    href: "https://github.com/Rin-reboot/anti-popup-guard",
+  },
 ] as const;
 
 const technologies = [
@@ -70,7 +79,92 @@ const technologies = [
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCareerOpen, setIsCareerOpen] = useState(false);
+  const [canScrollProjectsBack, setCanScrollProjectsBack] = useState(false);
+  const [canScrollProjectsForward, setCanScrollProjectsForward] = useState(true);
+  const [isDraggingProjects, setIsDraggingProjects] = useState(false);
   const careerDialogRef = useRef<HTMLDialogElement>(null);
+  const projectCarouselRef = useRef<HTMLElement>(null);
+  const projectDragRef = useRef({
+    pointerId: null as number | null,
+    startX: 0,
+    startScrollLeft: 0,
+    hasMoved: false,
+  });
+  const projectSnapCleanupRef = useRef<(() => void) | null>(null);
+
+  const updateProjectNavigation = useCallback(() => {
+    const carousel = projectCarouselRef.current;
+
+    if (!carousel) {
+      return;
+    }
+
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+    const edgeTolerance = 8;
+    setCanScrollProjectsBack(carousel.scrollLeft > edgeTolerance);
+    setCanScrollProjectsForward(carousel.scrollLeft < maxScrollLeft - edgeTolerance);
+  }, []);
+
+  const scrollProjects = (direction: -1 | 1) => {
+    const carousel = projectCarouselRef.current;
+    const firstCard = carousel?.querySelector<HTMLElement>(".project-card");
+
+    if (!carousel || !firstCard) {
+      return;
+    }
+
+    const track = carousel.querySelector<HTMLElement>(".project-grid");
+    const gap = track ? Number.parseFloat(getComputedStyle(track).columnGap) || 0 : 0;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    carousel.scrollBy({
+      left: direction * (firstCard.offsetWidth + gap),
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  };
+
+  const snapProjectsToNearest = (carousel: HTMLElement, releasePosition = carousel.scrollLeft) => {
+    const firstCard = carousel.querySelector<HTMLElement>(".project-card");
+    const track = carousel.querySelector<HTMLElement>(".project-grid");
+
+    if (!firstCard || !track) {
+      return;
+    }
+
+    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+    const cardStep = firstCard.offsetWidth + gap;
+    const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+    const nearestPosition = Math.round(releasePosition / cardStep) * cardStep;
+    const targetPosition = Math.min(maxScrollLeft, Math.max(0, nearestPosition));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    projectSnapCleanupRef.current?.();
+    carousel.style.scrollSnapType = "none";
+
+    if (reduceMotion || Math.abs(carousel.scrollLeft - targetPosition) < 1) {
+      carousel.scrollLeft = targetPosition;
+      carousel.style.removeProperty("scroll-snap-type");
+      projectSnapCleanupRef.current = null;
+      return;
+    }
+
+    let fallbackTimeout = 0;
+    const restoreScrollSnap = () => {
+      carousel.removeEventListener("scrollend", restoreScrollSnap);
+      window.clearTimeout(fallbackTimeout);
+      carousel.style.removeProperty("scroll-snap-type");
+      projectSnapCleanupRef.current = null;
+    };
+
+    carousel.addEventListener("scrollend", restoreScrollSnap, { once: true });
+    fallbackTimeout = window.setTimeout(restoreScrollSnap, 600);
+    projectSnapCleanupRef.current = restoreScrollSnap;
+
+    carousel.scrollTo({
+      left: targetPosition,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     const dialog = careerDialogRef.current;
@@ -82,6 +176,13 @@ export default function Home() {
       dialog.close();
     }
   }, [isCareerOpen]);
+
+  useEffect(() => {
+    updateProjectNavigation();
+    window.addEventListener("resize", updateProjectNavigation);
+
+    return () => window.removeEventListener("resize", updateProjectNavigation);
+  }, [updateProjectNavigation]);
 
   return (
     <div className="site-shell">
@@ -191,32 +292,140 @@ export default function Home() {
 
         <section className="work-section" id="work" aria-labelledby="work-title">
           <div className="section-heading">
-            <p>SELECTED WORK / 03</p>
+            <p>SELECTED WORK / 04</p>
             <h2 id="work-title">Things I build.</h2>
           </div>
-          <div className="project-grid">
-            {projects.map((project) => (
-              <a
-                className={`project-card${project.index === "01" ? " project-card-featured" : ""}`}
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                key={project.title}
-              >
-                <div className="project-meta">
-                  <span>{project.index} / {project.type}</span>
-                  <span aria-hidden="true">↗</span>
-                </div>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <ul aria-label={`${project.title} の使用技術`}>
-                  {project.stack.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </a>
-            ))}
+          <div className="project-carousel">
+            <button
+              className="project-navigation project-navigation-previous"
+              type="button"
+              aria-label="前のプロジェクトを表示"
+              aria-controls="project-carousel-viewport"
+              disabled={!canScrollProjectsBack}
+              onClick={() => scrollProjects(-1)}
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+            <section
+              className={`project-viewport${isDraggingProjects ? " is-dragging" : ""}`}
+              id="project-carousel-viewport"
+              ref={projectCarouselRef}
+              aria-label="プロジェクト一覧"
+              aria-describedby="project-carousel-hint"
+              onScroll={updateProjectNavigation}
+              onDragStart={(event) => event.preventDefault()}
+              onPointerDown={(event) => {
+                if (event.pointerType === "touch" || event.button !== 0) {
+                  return;
+                }
+
+                projectSnapCleanupRef.current?.();
+                event.currentTarget.style.scrollSnapType = "none";
+                projectDragRef.current = {
+                  pointerId: event.pointerId,
+                  startX: event.clientX,
+                  startScrollLeft: event.currentTarget.scrollLeft,
+                  hasMoved: false,
+                };
+                event.currentTarget.classList.add("is-dragging");
+                event.currentTarget.setPointerCapture(event.pointerId);
+                setIsDraggingProjects(true);
+              }}
+              onPointerMove={(event) => {
+                const drag = projectDragRef.current;
+
+                if (drag.pointerId !== event.pointerId) {
+                  return;
+                }
+
+                const distance = event.clientX - drag.startX;
+                if (Math.abs(distance) > 4) {
+                  drag.hasMoved = true;
+                  event.preventDefault();
+                }
+                event.currentTarget.scrollLeft = drag.startScrollLeft - distance;
+              }}
+              onPointerUp={(event) => {
+                if (projectDragRef.current.pointerId !== event.pointerId) {
+                  return;
+                }
+
+                event.currentTarget.releasePointerCapture(event.pointerId);
+                if (projectDragRef.current.hasMoved) {
+                  const releasePosition =
+                    projectDragRef.current.startScrollLeft -
+                    (event.clientX - projectDragRef.current.startX);
+                  snapProjectsToNearest(event.currentTarget, releasePosition);
+                } else {
+                  event.currentTarget.style.removeProperty("scroll-snap-type");
+                }
+                event.currentTarget.classList.remove("is-dragging");
+                projectDragRef.current.pointerId = null;
+                setIsDraggingProjects(false);
+              }}
+              onPointerCancel={(event) => {
+                if (projectDragRef.current.hasMoved) {
+                  snapProjectsToNearest(event.currentTarget);
+                } else {
+                  event.currentTarget.style.removeProperty("scroll-snap-type");
+                }
+                event.currentTarget.classList.remove("is-dragging");
+                projectDragRef.current.pointerId = null;
+                projectDragRef.current.hasMoved = false;
+                setIsDraggingProjects(false);
+              }}
+              onClickCapture={(event) => {
+                if (projectDragRef.current.hasMoved) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  projectDragRef.current.hasMoved = false;
+                }
+              }}
+            >
+              <div className="project-grid">
+                {projects.map((project) => (
+                  <article
+                    className={`project-card${project.index === "01" ? " project-card-featured" : ""}`}
+                    key={project.title}
+                  >
+                    <div className="project-meta">
+                      <span>{project.index} / {project.type}</span>
+                      <a
+                        className="project-card-link"
+                        href={project.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        draggable={false}
+                        aria-label={`${project.title} の GitHub リポジトリを開く`}
+                      >
+                        OPEN <span aria-hidden="true">↗</span>
+                      </a>
+                    </div>
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <ul aria-label={`${project.title} の使用技術`}>
+                      {project.stack.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+            </section>
+            <button
+              className="project-navigation project-navigation-next"
+              type="button"
+              aria-label="次のプロジェクトを表示"
+              aria-controls="project-carousel-viewport"
+              disabled={!canScrollProjectsForward}
+              onClick={() => scrollProjects(1)}
+            >
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
+          <p className="project-carousel-hint" id="project-carousel-hint">
+            DRAG / SWIPE / USE CONTROLS
+          </p>
         </section>
 
         <section className="about-section" id="about" aria-labelledby="about-title">
