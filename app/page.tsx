@@ -315,7 +315,13 @@ export default function Home() {
               onScroll={updateProjectNavigation}
               onDragStart={(event) => event.preventDefault()}
               onPointerDown={(event) => {
-                if (event.pointerType === "touch" || event.button !== 0) {
+                const isInteractiveTarget =
+                  event.target instanceof Element &&
+                  event.target.closest(
+                    'a, button, input, select, textarea, summary, [role="button"], [contenteditable="true"]',
+                  );
+
+                if (event.pointerType === "touch" || event.button !== 0 || isInteractiveTarget) {
                   return;
                 }
 
