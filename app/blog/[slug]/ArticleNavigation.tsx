@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { TocItem } from "@/lib/blog";
+import { TocList } from "./_components/TocList";
 
 type ReturnDestination = { href: string; label: string };
 
@@ -11,10 +12,16 @@ function getReturnDestination(): ReturnDestination {
   const from = params.get("from");
   const value = params.get("value");
   if (from === "category" && value) {
-    return { href: `/blog/category/${encodeURIComponent(value)}/`, label: `${value}カテゴリの記事一覧へ` };
+    return {
+      href: `/blog/category/${encodeURIComponent(value)}/`,
+      label: `${value}カテゴリの記事一覧へ`,
+    };
   }
   if (from === "tag" && value) {
-    return { href: `/blog/tag/${encodeURIComponent(value)}/`, label: `#${value}の記事一覧へ` };
+    return {
+      href: `/blog/tag/${encodeURIComponent(value)}/`,
+      label: `#${value}の記事一覧へ`,
+    };
   }
   return { href: "/blog/", label: "記事一覧へ戻る" };
 }
@@ -22,7 +29,10 @@ function getReturnDestination(): ReturnDestination {
 export function ArticleNavigation({ toc }: { toc: TocItem[] }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isTocOpen, setIsTocOpen] = useState(false);
-  const [destination, setDestination] = useState<ReturnDestination>({ href: "/blog/", label: "記事一覧へ戻る" });
+  const [destination, setDestination] = useState<ReturnDestination>({
+    href: "/blog/",
+    label: "記事一覧へ戻る",
+  });
 
   useEffect(() => {
     setDestination(getReturnDestination());
@@ -41,36 +51,63 @@ export function ArticleNavigation({ toc }: { toc: TocItem[] }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [isTocOpen]);
 
-  const scrollToTop = () => {
-    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  function scrollToTop() {
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches
+      ? "auto"
+      : "smooth";
     window.scrollTo({ top: 0, behavior });
-  };
+  }
+
+  function handleTocToggle() {
+    setIsTocOpen((isOpen) => !isOpen);
+  }
+
+  function handleTocClose() {
+    setIsTocOpen(false);
+  }
 
   return (
     <>
       <nav className="article-return" aria-label="記事一覧へ戻る">
-        <Link href={destination.href}><span aria-hidden="true">←</span> {destination.label}</Link>
+        <Link href={destination.href}>
+          <span aria-hidden="true">←</span> {destination.label}
+        </Link>
       </nav>
       {isVisible && (
         <div className="article-floating-actions">
-          <button type="button" aria-expanded={isTocOpen} aria-controls="floating-toc" onClick={() => setIsTocOpen((open) => !open)}>ToC</button>
-          <button type="button" aria-label="ページ上部へ戻る" onClick={scrollToTop}>↑</button>
+          <button
+            type="button"
+            aria-expanded={isTocOpen}
+            aria-controls="floating-toc"
+            onClick={handleTocToggle}
+          >
+            ToC
+          </button>
+          <button
+            type="button"
+            aria-label="ページ上部へ戻る"
+            onClick={scrollToTop}
+          >
+            ↑
+          </button>
         </div>
       )}
       {isVisible && isTocOpen && (
         <aside className="floating-toc" id="floating-toc" aria-label="目次">
-          <header><p>TABLE OF CONTENTS</p><button type="button" aria-label="目次を閉じる" onClick={() => setIsTocOpen(false)}>×</button></header>
-          <TocList toc={toc} onNavigate={() => setIsTocOpen(false)} />
+          <header>
+            <p>TABLE OF CONTENTS</p>
+            <button
+              type="button"
+              aria-label="目次を閉じる"
+              onClick={handleTocClose}
+            >
+              ×
+            </button>
+          </header>
+          <TocList toc={toc} onNavigate={handleTocClose} />
         </aside>
       )}
     </>
   );
-}
-
-export function ArticleToc({ toc }: { toc: TocItem[] }) {
-  return <nav className="article-toc" aria-label="目次"><p>TABLE OF CONTENTS</p><TocList toc={toc} /></nav>;
-}
-
-function TocList({ toc, onNavigate }: { toc: TocItem[]; onNavigate?: () => void }) {
-  return <ol>{toc.map((item) => <li className={item.level === 3 ? "toc-level-3" : undefined} key={item.id}><a href={`#${item.id}`} onClick={onNavigate}>{item.text}</a></li>)}</ol>;
 }

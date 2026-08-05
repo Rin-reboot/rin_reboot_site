@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://rin-reboot-site.pages.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -17,7 +16,14 @@ export const metadata: Metadata = {
     url: "/",
     title: "Rin — Frontend Engineer",
     description: "Interfaces, systems, and everything between.",
-    images: [{ url: "/og.png", width: 1536, height: 1024, alt: "Rin — Frontend Engineer" }],
+    images: [
+      {
+        url: "/og.png",
+        width: 1536,
+        height: 1024,
+        alt: "Rin — Frontend Engineer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
